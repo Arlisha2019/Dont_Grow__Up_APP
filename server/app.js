@@ -2,6 +2,7 @@ const express = require('express');
 const path = require('path');
 const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
+const cors = require('cors')
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const exjwt = require('express-jwt');
@@ -22,6 +23,8 @@ data.authenticate()
 
 
 /*========= Here we want to let the server know that we should expect and allow a header with the content-type of 'Authorization' ============*/
+
+app.use(cors())
 app.use((req, res, next) => {
   res.setHeader('Access-Control-Allow-Headers', 'Content-type,Authorization');
   next();
@@ -55,12 +58,11 @@ app.post('/register', (req, res) => {
 
 /* This is SUPER important! This is the route that the client will be passing the entered credentials for verification to. If the credentials match, then the server sends back a json response with a valid json web token for the client to use for identification. */
 app.post('/login', (req, res) => {
-  const { username, password } = req.body;
+  const { username, password} = req.body;
   console.log("User submitted: ", username, password);
-
   db.user.findOne(
     {
-      where: { username: username }
+      where: { username: username}
     })
     .then((user) => {
       console.log("User Found: ", user);
@@ -72,8 +74,10 @@ app.post('/login', (req, res) => {
           console.log("Valid!");
           let token = jwt.sign({ username: user.username }, 'I love the mess', { expiresIn: 129600 }); // Signing the token
           res.json({
-            sucess: true,
+            success: true,
             err: null,
+            firstName: user.firstname,
+            lastName: user.lastname,
             token
           });
         }
@@ -88,6 +92,39 @@ app.post('/login', (req, res) => {
       });
     })
 });
+
+
+app.post('/new_profile', (req, res) => {
+
+  const { major, city, isProfileCompleted} = req.body;
+
+  db.Profile.build({
+    major: major,
+    city: city,
+    isProfileCompleted: true
+  })
+  .save()
+  .then(update => {
+    console.log('Look at ME' + update);
+    res.json(update)
+  })
+})
+
+app.get('/profile/:id', (req, res) => {
+
+  const userId = req.params.Id;
+
+  db.user.find({
+    where: { userId: userId }
+  })
+    .then(owner => {
+      res.json(owner);
+    });
+});
+
+
+
+
 //Get Users List
 app.get('/', (req, res) =>
   db.user.findAll()
@@ -121,6 +158,16 @@ app.get('/', (req, res) =>
 //   console.log("Web Token Checked.")
 //   res.send('You are authenticated'); //Sending some response when authenticated
 // });
+// app.Profiles.create('/new_profile' (req, res) => {
+//   db.Profile.
+// })
+
+
+
+
+app.get('/register', (req, res) => {
+  res.send('/register')
+})
 
 db.sequelize.sync().then(() => {
   app.listen(PORT, function () {
@@ -128,9 +175,7 @@ db.sequelize.sync().then(() => {
   });
 })
 
-app.get('/register', (req, res) => {
-  res.send('/register')
-})
+
 
 
 

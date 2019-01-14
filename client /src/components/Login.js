@@ -2,13 +2,15 @@ import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import './Login.css'
 import axios from "axios";
+import Header from './Header'
 //import AuthHelperMethods from './AuthHelperMethods';
 
 class Login extends Component {
 
   state = {
     username: "",
-    password: ""
+    password: "",
+    isLoggedIn: false
 
   }
 
@@ -26,11 +28,13 @@ class Login extends Component {
 
     axios.post('/login', {
       username: this.state.username,
-      password: this.state.password
+      password: this.state.password,
+
 
   })
 
   .then(data => {
+    localStorage.setItem('data', data.data.firstName)
     console.log(data);
     this.props.history.push('/profile');
   });
@@ -48,10 +52,13 @@ class Login extends Component {
 
   render() {
     return (
+      <div>
+      <Header />
 
                   <div className="main-wrapper">
+
                       <div className="box">
-                          <div className="box-header">
+                        <div className="box-header">
                               <h1>Login</h1>
                           </div>
                           <form className="box-form">
@@ -76,6 +83,7 @@ class Login extends Component {
                       <div className="signiture">
 
                       </div>
+                  </div>
                   </div>
 
 

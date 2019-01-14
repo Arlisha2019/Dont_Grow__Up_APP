@@ -1,0 +1,18 @@
+.container {
+  display: flex;
+}
+
+#car__image {
+  width: 300px;
+  height: 300px;
+}
+
+#apartment_img {
+  width: 300px;
+  height: 300px;
+}
+
+#student_loans_img {
+  width: 300px;
+  height: 300px;
+}

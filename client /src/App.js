@@ -37,7 +37,6 @@ class App extends Component {
         <div className="top-section">
         </div>
         <div>
-        <h1>Welcome to the "Don't Grow Up: Credit Builder" App</h1>
           {this.props.children}
         </div>
         <div className="bottom-section">
