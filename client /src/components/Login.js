@@ -29,12 +29,11 @@ class Login extends Component {
     axios.post('/login', {
       username: this.state.username,
       password: this.state.password,
-
-
   })
 
   .then(data => {
     localStorage.setItem('data', data.data.firstName)
+    localStorage.setItem('userId', data.data.id)
     console.log(data);
     this.props.history.push('/profile');
   });

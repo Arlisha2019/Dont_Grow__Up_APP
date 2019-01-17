@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Menu, Footer } from './components/Menu'
 import AuthHelperMethods from './components/AuthHelperMethods';
 import withAuth from './components/withAuth';
+import Profile from './components/Profile'
 import './App.css';
 
 
@@ -35,12 +36,16 @@ class App extends Component {
     <div className="App">
       <div className="main-page">
         <div className="top-section">
+        <Menu/>
         </div>
         <div>
           {this.props.children}
         </div>
         <div className="bottom-section">
-        <Footer />
+        <div>
+        </div>
+        <div>
+        </div>
         </div>
       </div>
     </div>
@@ -49,6 +54,10 @@ class App extends Component {
   }
 
 export default App;
+
+
+
+
 
 // class App extends Component {
 //

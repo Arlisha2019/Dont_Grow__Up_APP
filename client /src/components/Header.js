@@ -7,8 +7,9 @@ class Header extends Component {
   render() {
     return (
       <div>
-      
-        <h1> Welcome to the "Don't Grow Up: Credit Builder" App</h1>
+
+        <h1>"Don't Grow Up"</h1>
+        <h2>Financial Literacy Game for Children</h2>
 
       </div>
     )

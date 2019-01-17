@@ -11,10 +11,17 @@ import StudentLoans from './components/StudentLoans'
 import Vehicle from './components/Vehicle'
 import { Register } from './components/Register'
 import Login from './components/Login'
-
+import 'materialize-css'; // It installs the JS asset only
+import 'materialize-css/dist/css/materialize.min.css'
+import { createStore, combineReducers} from 'redux';
+import { Provider } from 'react-redux'
+import reducer from './store/reducer'
 import * as serviceWorker from './serviceWorker';
 
+let store = createStore(reducer, window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__())
+
 ReactDOM.render(
+<Provider store={store}>
   <BrowserRouter>
     <App>
     <Switch>
@@ -29,6 +36,7 @@ ReactDOM.render(
     </Switch>
     </App>
   </BrowserRouter>
+</Provider>
 
 
 

@@ -1,6 +1,8 @@
 .menuBar {
   display: flex;
   list-style: none;
+  border-radius: 25px;
+  border-style: outset;
   background-color: blue;
   color: white;
   justify-content: space-around;
@@ -11,9 +13,13 @@
   font-weight: bold;
 }
 
+body {
+  background-color: #ffC433;
+}
 a {
   text-decoration: none;
   color: white;
+  font-size: 35px;
 }
 
 a:hover {

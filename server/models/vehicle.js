@@ -10,6 +10,7 @@ module.exports = (sequelize, DataTypes) => {
   }, {});
   Vehicle.associate = function(models) {
     // associations can be defined here
+    Vehicle.belongsTo(models.user, {as : 'user', foreignKey: 'userId'})
   };
   return Vehicle;
 };

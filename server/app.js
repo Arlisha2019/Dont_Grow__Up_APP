@@ -41,10 +41,11 @@ const jwtMW = exjwt({
 });
 
 app.post('/register', (req, res) => {
-  const { username, password, firstname, lastname } = req.body;
+  const { username, password, firstname, lastname, id } = req.body;
   const saltRounds = 10;
   bcrypt.hash(password, saltRounds, function (err, hash) {
     db.user.create({
+      userId: id,
       username: username,
       password: hash,
       firstname: firstname,
@@ -56,7 +57,6 @@ app.post('/register', (req, res) => {
   });
 })
 
-/* This is SUPER important! This is the route that the client will be passing the entered credentials for verification to. If the credentials match, then the server sends back a json response with a valid json web token for the client to use for identification. */
 app.post('/login', (req, res) => {
   const { username, password} = req.body;
   console.log("User submitted: ", username, password);
@@ -78,6 +78,7 @@ app.post('/login', (req, res) => {
             err: null,
             firstName: user.firstname,
             lastName: user.lastname,
+            id: user.id,
             token
           });
         }
@@ -93,14 +94,15 @@ app.post('/login', (req, res) => {
     })
 });
 
-
 app.post('/new_profile', (req, res) => {
 
-  const { major, city, isProfileCompleted} = req.body;
+  const { major, city, isProfileCompleted, salary, userId} = req.body;
 
   db.Profile.build({
+    userId: userId,
     major: major,
     city: city,
+    salary: salary,
     isProfileCompleted: true
   })
   .save()
@@ -110,20 +112,97 @@ app.post('/new_profile', (req, res) => {
   })
 })
 
-app.get('/profile/:id', (req, res) => {
+app.post('/bank_acc', (req, res) => {
 
-  const userId = req.params.Id;
+  const {userId, checkingBalance, savingsBalance, isCurrent, paycheck } = req.body;
 
-  db.user.find({
-    where: { userId: userId }
+  db.BankAccount.build({
+    userId: userId,
+    checkingBalance: checkingBalance,
+    savingsBalance: savingsBalance,
+    paycheck: paycheck,
+    isCurrent: true
   })
-    .then(owner => {
-      res.json(owner);
-    });
-});
+  .save()
+  .then(update => {
+    console.log('Bank Account looking like' + update);
+    res.json(update)
+  })
+})
 
+app.post('/credit_card', (req, res) => {
 
+  const { userId, isCurrent, paymentAmount, dueDate, balance, interestRate, availableBalance } = req.body;
 
+  db.CreditCard.build({
+    userId: userId,
+    isCurrent: true,
+    paymentAmount: paymentAmount,
+    dueDate: dueDate,
+    balance: balance,
+    interestRate: interestRate,
+    availableBalance: availableBalance
+  })
+  .save()
+  .then(update => {
+    console.log('Credit Cards now active' + update);
+    res.json(update)
+  })
+})
+
+app.post('/student_loan', (req, res) => {
+
+    const { userId, isCurrent, paymentAmount, dueDate, balance, interestRate } = req.body;
+
+    db.StudentLoans.build({
+      userId: userId,
+      isCurrent: true,
+      paymentAmount: paymentAmount,
+      dueDate: dueDate,
+      balance: balance
+    })
+    .save()
+    .then(update => {
+      console.log('Student Loan now Active' + update);
+      res.json(update)
+    })
+  })
+
+app.post('/vehicle', (req, res) => {
+
+  const { userId, isCurrent, paymentAmount, dueDate, balance, interestRate } = req.body;
+
+  db.Vehicle.build({
+    userId: userId,
+    isCurrent: true,
+    paymentAmount: paymentAmount,
+    dueDate: dueDate,
+    interestRate: interestRate,
+    balance: balance
+  })
+  .save()
+  .then(update => {
+    console.log('Vehicle now Active' + update);
+    res.json(update)
+  })
+})
+
+app.post('/housing', (req, res) => {
+
+  const { userId, isCurrent, rentAmount, dueDate } = req.body;
+
+  db.Housing.build({
+    userId: userId,
+    isCurrent: true,
+    rentAmount: rentAmount,
+    dueDate: dueDate
+  })
+  .save()
+  .then(update => {
+    console.log('Housing now Active' + update);
+    res.json(update)
+  })
+})
 
 //Get Users List
 app.get('/', (req, res) =>
@@ -134,25 +213,6 @@ app.get('/', (req, res) =>
     })
     .catch(err => console.log(err)));
 
-// app.get('/add', (req, res) => {
-//   const data = {
-//     firstname: 'Arnold',
-//     lastname: 'Hayles',
-//     username: 'Arnold2019',
-//     password: '12345678'
-//   }
-//   let { firstname, lastname, username, password } = data
-//
-//   db.user.create({
-//     firstname,
-//     lastname,
-//     username,
-//     password
-//   })
-//     .then(user => res.redirect('/'))
-//     .catch(err => console.log(err))
-//
-// })
 
 // app.get('/', jwtMW /* Using the express jwt MW here */, (req, res) => {
 //   console.log("Web Token Checked.")
@@ -162,8 +222,106 @@ app.get('/', (req, res) =>
 //   db.Profile.
 // })
 
+app.post('/profile/getinfo/:userId', (req, res) => {
 
+  const userId = req.params.userId
 
+  let profileInfo
+  let accountInfo
+  let returnedInfo
+
+  console.log(req.body);
+
+  db.Profile.findOne({
+    where: {userId: userId}
+  })
+  .then(profile => {
+    // profileInfo = {profile:profile}
+    console.log(profile);
+    res.json(profile)
+  })
+})
+
+app.get('/bank_acc/info/:userId', (req, res) => {
+
+  const userId = req.params.userId
+
+  db.BankAccount.findOne({
+    where: { userId: userId }
+  })
+  .then(bankAccount => {
+    console.log(bankAccount);
+    res.json(bankAccount)
+  })
+})
+
+app.get('/creditCard/info/:userId', (req, res) => {
+
+  const userId = req.params.userId
+
+  db.CreditCard.findOne({
+    where: { userId: userId}
+  })
+  .then(creditCard => {
+    console.log(creditCard);
+    res.json(creditCard)
+  })
+})
+
+app.get('/studentLoan/info/:userId', (req, res) => {
+
+  const userId = req.params.userId
+
+  db.StudentLoans.findOne({
+    where: { userId: userId}
+  })
+  .then(studentLoan => {
+    console.log(studentLoan);
+    res.json(studentLoan)
+  })
+})
+
+app.get('/vehicle/info/:userId', (req, res) => {
+
+  const userId = req.params.userId
+
+  db.Vehicle.findOne({
+    where: { userId: userId}
+  })
+  .then(vehicle => {
+    console.log(vehicle);
+    res.json(vehicle)
+  })
+})
+
+app.get('/housing/info/:userId', (req, res) => {
+
+  const userId = req.params.userId
+
+  db.Housing.findOne({
+    where: { userId: userId}
+  })
+  .then(housing => {
+    console.log(housing);
+    res.json(housing)
+  })
+})
+
+app.post('/credit_card/update/:id', (req, res) => {
+
+  const userId = req.params.userId
+  const availableBalance = req.body.availableBalance
+
+  db. CreditCard.findOne({
+    where: { userId: userId }
+  })
+  .then(creditCard => {
+    return creditCard.Attributes(availableBalance)
+  })
+  .then(updateCreditCard => {
+    res.json(updateCreditCard)
+  })
+})
 
 app.get('/register', (req, res) => {
   res.send('/register')

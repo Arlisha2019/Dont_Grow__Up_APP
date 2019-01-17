@@ -9,15 +9,15 @@ export class Menu extends Component {
 
     let isAuthenticated = true
 
-  let authenticatedMenuItems = [{ name: "Profile", url: "/profile"}, {name: "Bank Account", url: "/bank_acc"}, {name: "Housing", url: "/housing"}, {name: "Vehicle", url: "/vehicle"}, {name: "Student Loans", url: "/student_loans"}, {name:"Credit Cards", url: "/credit_cards" }, {name: "Logout", url: "/login"}]
+  let authenticatedMenuItems = [{ name: "Profile", url: "/profile"}, {name: "Bank Account", url: "/bank_acc"}, {name: "Logout", url: "/login"}]
 
     let nonAuthenticatedMenuItems = [{name: "Login", url: "/login"}, {name: "Register", url: "/register"}]
 
     let menuItems = []
 
     if(isAuthenticated) {
-      menuItems =  authenticatedMenuItems.map((item) => {
-        return <div>
+      menuItems =  authenticatedMenuItems.map((item, i) => {
+        return <div key ={i}>
 
               <li>
               <Link to={item.url}>{item.name}</Link>

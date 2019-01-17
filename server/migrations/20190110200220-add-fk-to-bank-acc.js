@@ -8,6 +8,7 @@ module.exports = {
       {
         type: Sequelize.INTEGER,
         allowNull: false,
+        defaultValue: 1, 
         references: {
           model: "users",
           key: "id"
